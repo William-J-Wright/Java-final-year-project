@@ -20,7 +20,9 @@ public class Map extends JPanel {
     public static final int NUM_COLS = 100;
     public Color black = Color.BLACK;
     public static final int PREFERRED_GRID_SIZE_PIXELS = 10;
-
+        boolean cantMoveUp = false;
+        boolean cantMoveLeft = false;
+        boolean cantMoveRight = false;
     // In reality you will probably want a class here to represent a map tile,
     // which will include things like dimensions, color, properties in the
     // game world.  Keeping simple just to illustrate.
@@ -74,9 +76,7 @@ public class Map extends JPanel {
     public void paintComponent(Graphics g) {
         // Important to call super class method
         super.paintComponent(g);
-        boolean cantMoveUp = false;
-        boolean cantMoveLeft = false;
-        boolean cantMoveRight = false;
+        
         int counter = 0;
         // Clear the board
         g.clearRect(0, 0, getWidth(), getHeight());
@@ -94,82 +94,69 @@ public class Map extends JPanel {
                 g.fillRect(x, y, rectWidth, rectHeight);
                
                 if(move != 0){//making sure its meant to move the car.
-                    System.out.println(cantMoveUp);
                     g.setColor(Color.GREEN);//setting the recolour to green.
-                    if(cantMoveLeft == true && cantMoveUp == true && cantMoveRight == true){
-                        g.fillRect(x, y+10, rectWidth, rectHeight);
-                        holdj +=1;
-                        move = 0;
-                        cantMoveLeft = false;
-                        cantMoveRight = false;
+                    if(worldMap[i][j-1] != black){//if the square to the north
+                    //isnt black move to it.
+                    left = 0;
                     }else{
-                    if(worldMap[i][j-1].getRGB() != black.getRGB()){//if the square to the north
-                        //isnt black move to it.
-                    left = 0;}else{
-                    left = 1 + (int)(Math.random() * 2);//else 
-                        System.out.println(left);
-                    }}
+                        left = 1 + (int)(Math.random() * 2);//else 
+                        cantMoveUp = true;
+                    }
                 if(left == 0)//the movement for going up
                 {
-                if(worldMap[i][j-1].getRGB() == black.getRGB()){
+                if(worldMap[i][j-1] == black){
                     g.fillRect(x, y, rectWidth, rectHeight);
                     cantMoveUp = true;
-                }else if(cantMoveUp == false){//move up
+                }else {//move up
                 g.fillRect(x, y-10, rectWidth, rectHeight);
                 holdj -=1;
                 move = 0;
-                cantMoveLeft = false;
-                cantMoveRight = false;
-                cantMoveUp = false;
+                
                 counter = 0;
-                }}else if(left == 1 && cantMoveLeft == false){
-                    if(worldMap[i-1][j].getRGB() == black.getRGB()){
-                        cantMoveLeft = true;
+                }}else if(left == 1 ){
+                    if(worldMap[i-1][j] == black){
                         g.fillRect(x, y, rectWidth, rectHeight);
-                }else{//move left
-                g.fillRect(x-10, y, rectWidth, rectHeight);
-                System.out.println(holdi);
-                holdi -=1;
-                move = 0;
-                cantMoveLeft = false;
-                }}else if(left ==2 && cantMoveRight==false){//move right
-                if(worldMap[i+1][j].getRGB() == black.getRGB()){
-                        g.fillRect(x, y, rectWidth, rectHeight);
-                        cantMoveRight = true;
-                }else if(cantMoveRight == false){
-                g.fillRect(x+10, y, rectWidth, rectHeight);
-                holdi +=1;
-                move = 0;
-                cantMoveRight = false;
+                        }else{//move left
+                        g.fillRect(x-10, y, rectWidth, rectHeight);
+                        holdi -=1;
+                        move = 0;
+                            if(worldMap[i-1][j-1] != black){
+                            cantMoveUp = false;}
+                }}else if(left ==2 ){//move right
+                if(worldMap[i+1][j] == black){
+                    g.fillRect(x, y, rectWidth, rectHeight);
+                }else {
+                    g.fillRect(x+10, y, rectWidth, rectHeight);
+                    holdi +=1;
+                    move = 0;
                 }}}
                 }else if(holdi == i && holdj ==j){
-                     g.setColor(Color.GREEN);
+                    g.setColor(Color.GREEN);
                     int x = i * rectWidth;
-                int y = j * rectHeight;
-                g.fillRect(x, y, rectWidth, rectHeight);}
+                    int y = j * rectHeight;
+                    g.fillRect(x, y, rectWidth, rectHeight);}
                     else{
-                int x = i * rectWidth;
-                int y = j * rectHeight;
-                Color terrainColor = worldMap[i][j];
-                g.setColor(terrainColor);
-                g.fillRect(x, y, rectWidth, rectHeight);
-            }}
-        }
-        }else {
-        int rectWidth = getWidth() / NUM_COLS;
-        int rectHeight = getHeight() / NUM_ROWS;
-
-        for (int i = 0; i < NUM_ROWS; i++) {
-            for (int j = 0; j < NUM_COLS; j++) {
-                // Upper left corner of this terrain rect
-                int x = i * rectWidth;
-                int y = j * rectHeight;
-                Color terrainColor = worldMap[i][j];
-                g.setColor(terrainColor);
-                g.fillRect(x, y, rectWidth, rectHeight);
-            }
-        }
-    }
+                        int x = i * rectWidth;
+                        int y = j * rectHeight;
+                        Color terrainColor = worldMap[i][j];
+                        g.setColor(terrainColor);
+                        g.fillRect(x, y, rectWidth, rectHeight);
+                    }}
+                }
+                }else {
+                    int rectWidth = getWidth() / NUM_COLS;
+                    int rectHeight = getHeight() / NUM_ROWS;
+                    for (int i = 0; i < NUM_ROWS; i++) {
+                        for (int j = 0; j < NUM_COLS; j++) {
+                        // Upper left corner of this terrain rect
+                            int x = i * rectWidth;
+                            int y = j * rectHeight;
+                            Color terrainColor = worldMap[i][j];
+                            g.setColor(terrainColor);
+                            g.fillRect(x, y, rectWidth, rectHeight);
+                        }
+                    }
+                }
 }
 
     public static void main(String[] args) {
