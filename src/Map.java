@@ -92,11 +92,17 @@ public class Map extends JPanel {
                 int y = j * rectHeight;
                 this.worldMap[i][j] = Color.GRAY;
                 g.fillRect(x, y, rectWidth, rectHeight);
-               
                 if(move != 0){//making sure its meant to move the car.
                     g.setColor(Color.GREEN);//setting the recolour to green.
+                    if(cantMoveLeft == true && cantMoveRight == true){
+                    g.fillRect(x, y+10, rectWidth, rectHeight);
+                    holdj +=1;
+                    move = 0;
+                    
+                    }
                     if(worldMap[i][j-1] != black){//if the square to the north
                     //isnt black move to it.
+                        cantMoveUp = true;
                     left = 0;
                     }else{
                         left = 1 + (int)(Math.random() * 2);//else 
@@ -104,28 +110,25 @@ public class Map extends JPanel {
                     }
                 if(left == 0)//the movement for going up
                 {
-                if(worldMap[i][j-1] == black){
-                    g.fillRect(x, y, rectWidth, rectHeight);
-                    cantMoveUp = true;
-                }else {//move up
                 g.fillRect(x, y-10, rectWidth, rectHeight);
                 holdj -=1;
                 move = 0;
-                
                 counter = 0;
-                }}else if(left == 1 ){
+                }else if(left == 1 ){
                     if(worldMap[i-1][j] == black){
+                        cantMoveLeft = true;
                         g.fillRect(x, y, rectWidth, rectHeight);
                         }else{//move left
+                        cantMoveLeft = false;
                         g.fillRect(x-10, y, rectWidth, rectHeight);
                         holdi -=1;
                         move = 0;
-                            if(worldMap[i-1][j-1] != black){
-                            cantMoveUp = false;}
                 }}else if(left ==2 ){//move right
                 if(worldMap[i+1][j] == black){
+                    cantMoveRight = true;
                     g.fillRect(x, y, rectWidth, rectHeight);
                 }else {
+                    cantMoveRight = false;
                     g.fillRect(x+10, y, rectWidth, rectHeight);
                     holdi +=1;
                     move = 0;
