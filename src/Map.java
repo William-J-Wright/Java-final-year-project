@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import static java.awt.Color.BLUE;
+import static java.awt.Color.CYAN;
 import java.awt.event.ActionEvent;
 import java.util.Random;
 import java.awt.event.ActionListener;
@@ -19,8 +21,8 @@ public class Map extends JPanel {
     public static int left =0;
     public static int but = 1;
     public static int move = 1;
-    public static final int NUM_ROWS = 100;
-    public static final int NUM_COLS = 100;
+    public static final int NUM_ROWS = 25;
+    public static final int NUM_COLS = 25;
     public Color black = Color.BLACK;
     public static final int PREFERRED_GRID_SIZE_PIXELS = 10;
         boolean cantMoveUp = false;
@@ -42,25 +44,18 @@ public class Map extends JPanel {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 double rand = Math.random() * ( 1 - 0 );
-                if(j > 80 & i > 40 & i < 60)
-                {
-                    if(j == 97 & i == 50)
+                if(j == NUM_COLS-1 & i == NUM_ROWS-1)
                     {
                         holdj = j;
                         holdi = i;
                         this.worldMap[i][j] = Color.GREEN;
-                        this.map[i][j] = 2;
-                    }else{
                         this.map[i][j] = 1;
-                        this.worldMap[i][j] = Color.GRAY;
-                    }
-                }
-                else
+                    }else
                 if(rand <0.5)
                 {
-                    if(j >0 & i >1 & i <99){
+                    if(j > 0 & i <NUM_COLS){
                     if(gray.getRGB() == worldMap[i][j-1].getRGB()){
-                         int makemeGray = 1 + (int)(Math.random() * 10);
+                         int makemeGray = 1 + (int)(Math.random() * 30);
                          if(makemeGray > 3){
                          this.worldMap[i][j] = Color.GRAY;
                          this.map[i][j] = 1;
@@ -80,8 +75,8 @@ public class Map extends JPanel {
                 }
             }
         }
-        this.height = 100;
-        this.width = 100;
+        this.height = 25;
+        this.width = 25;
         int preferredWidth = NUM_COLS * PREFERRED_GRID_SIZE_PIXELS;
         int preferredHeight = NUM_ROWS * PREFERRED_GRID_SIZE_PIXELS;
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
@@ -100,51 +95,52 @@ public class Map extends JPanel {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 // Upper left corner of this terrain rect
-                if(i==holdi & j ==holdj){
+                if(i==holdi && j ==holdj){
                 int x = i * rectWidth;
                 int y = j * rectHeight;
                 this.worldMap[i][j] = Color.GRAY;
                 g.fillRect(x, y, rectWidth, rectHeight);
                 if(move != 0){//making sure its meant to move the car.
                     g.setColor(Color.GREEN);//setting the recolour to green.
-                    if (this.map[i][j-1] == 3){
-                    left = 0;
-                    this.map[i][j-1] = 2;
-                    }else if (this.map[i-1][j] == 3){
-                    left = 1;
-                    this.map[i-1][j] = 2;
-                    }else if (this.map[i+1][j] == 3) {
-                    left = 2;
-                    this.map[i+1][j] = 2;
-                    }
-                if(left == 0)//the movement for going up
-                {
-                g.fillRect(x, y-10, rectWidth, rectHeight);
-                holdj -=1;
-                move = 0;
-                }else if(left == 1 ){
+                    System.out.println(i);
+                    System.out.println(j);
+                    if (this.map[i][j-1] == 3 && holdj-1 >=0){
+                        g.fillRect(x, y-10, rectWidth, rectHeight);
+                        holdj -=1;
+                        move = 0;
+                        this.map[i][j-1] = 2;
+                    }else if (this.map[i-1][j] == 3 && holdi-1 >= 0){
                         g.fillRect(x-10, y, rectWidth, rectHeight);
                         holdi -=1;
                         move = 0;
-                }else if(left ==2 ){//move right
-                    g.fillRect(x+10, y, rectWidth, rectHeight);
-                    holdi +=1;
-                    move = 0;
-                }}
-                }else if(holdi == i && holdj ==j){
-                    g.setColor(Color.GREEN);
-                    int x = i * rectWidth;
-                    int y = j * rectHeight;
-                    g.fillRect(x, y, rectWidth, rectHeight);}
-                    else{
+                        this.map[i-1][j] = 2;
+                    }else if (this.map[i+1][j] == 3 && holdi+1 < NUM_COLS) {
+                        g.fillRect(x+10, y, rectWidth, rectHeight);
+                        holdi +=1;
+                        move = 0;
+                        this.map[i+1][j] = 2;
+                    }else if (this.map[i][j+1] == 3) {
+                        g.fillRect(x, y+10, rectWidth, rectHeight);
+                        holdj +=1;
+                        move = 0;
+                        this.map[i][j+1] = 2;
+                    }
+                }
+                }else {//repaints the rest of map after moving square
                         int x = i * rectWidth;
                         int y = j * rectHeight;
                         Color terrainColor = worldMap[i][j];
-                        g.setColor(terrainColor);
+                        if(map[i][j] == 3)
+                            {
+                                g.setColor(CYAN);
+                            }
+                            else{
+                            g.setColor(terrainColor);
+                            }
                         g.fillRect(x, y, rectWidth, rectHeight);
                     }}
                 }
-                }else {
+                }else {//will build the map before running
                     int rectWidth = getWidth() / NUM_COLS;
                     int rectHeight = getHeight() / NUM_ROWS;
                     for (int i = 0; i < NUM_ROWS; i++) {
@@ -153,7 +149,16 @@ public class Map extends JPanel {
                             int x = i * rectWidth;
                             int y = j * rectHeight;
                             Color terrainColor = worldMap[i][j];
+                            if(map[i][j] == 2)
+                            {
+                                g.setColor(BLUE);
+                            }else if(map[i][j] == 3)
+                            {
+                                g.setColor(CYAN);
+                            }
+                            else{
                             g.setColor(terrainColor);
+                            }
                             g.fillRect(x, y, rectWidth, rectHeight);
                         }
                     }
@@ -172,7 +177,7 @@ public class Map extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
                     ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-                    executor.scheduleAtFixedRate(helloRunnable, 0, 100, TimeUnit.MILLISECONDS);
+                    executor.scheduleAtFixedRate(helloRunnable, 0, 50, TimeUnit.MILLISECONDS);
                     }
                 });
                 
@@ -199,7 +204,7 @@ public class Map extends JPanel {
         });
     }
     public boolean solve() {
-        return traverse(20,20);
+        return traverse(2,2);
     }
 
     private boolean traverse(int i, int j) {
@@ -239,7 +244,7 @@ public class Map extends JPanel {
     }
 
     private boolean isEnd(int i, int j) {
-        return i == 97 && j == 50;
+        return i == NUM_ROWS-1 && j == NUM_ROWS-1;
     }
 
     private boolean isValid(int i, int j) {
