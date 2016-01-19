@@ -19,8 +19,8 @@ public class Map extends JPanel {
     public static int left =0;
     public static int but = 1;
     public static int move = 1;
-    public static final int NUM_ROWS = 50;
-    public static final int NUM_COLS = 50;
+    public static final int NUM_ROWS = 100;
+    public static final int NUM_COLS = 100;
     public Color black = Color.BLACK;
     public static final int PREFERRED_GRID_SIZE_PIXELS = 10;
         boolean cantMoveUp = false;
@@ -42,9 +42,9 @@ public class Map extends JPanel {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 double rand = Math.random() * ( 1 - 0 );
-                if(j > 40 & i > 20 & i < 30)
+                if(j > 80 & i > 40 & i < 60)
                 {
-                    if(j == 47 & i == 25)
+                    if(j == 97 & i == 50)
                     {
                         holdj = j;
                         holdi = i;
@@ -80,8 +80,8 @@ public class Map extends JPanel {
                 }
             }
         }
-        this.height = 50;
-        this.width = 50;
+        this.height = 100;
+        this.width = 100;
         int preferredWidth = NUM_COLS * PREFERRED_GRID_SIZE_PIXELS;
         int preferredHeight = NUM_ROWS * PREFERRED_GRID_SIZE_PIXELS;
         setPreferredSize(new Dimension(preferredWidth, preferredHeight));
@@ -107,19 +107,15 @@ public class Map extends JPanel {
                 g.fillRect(x, y, rectWidth, rectHeight);
                 if(move != 0){//making sure its meant to move the car.
                     g.setColor(Color.GREEN);//setting the recolour to green.
-                    if(cantMoveLeft == true && cantMoveRight == true){
-                    g.fillRect(x, y+10, rectWidth, rectHeight);
-                    holdj +=1;
-                    move = 0;
-                    
-                    }
-                    if(worldMap[i][j-1] != black){//if the square to the north
-                    //isnt black move to it.
-                        cantMoveUp = true;
+                    if (this.map[i][j-1] == 3){
                     left = 0;
-                    }else{
-                        left = 1 + (int)(Math.random() * 2);//else 
-                        cantMoveUp = true;
+                    this.map[i][j-1] = 2;
+                    }else if (this.map[i-1][j] == 3){
+                    left = 1;
+                    this.map[i-1][j] = 2;
+                    }else if (this.map[i+1][j] == 3) {
+                    left = 2;
+                    this.map[i+1][j] = 2;
                     }
                 if(left == 0)//the movement for going up
                 {
@@ -127,24 +123,14 @@ public class Map extends JPanel {
                 holdj -=1;
                 move = 0;
                 }else if(left == 1 ){
-                    if(worldMap[i-1][j] == black){
-                        cantMoveLeft = true;
-                        g.fillRect(x, y, rectWidth, rectHeight);
-                        }else{//move left
-                        cantMoveLeft = false;
                         g.fillRect(x-10, y, rectWidth, rectHeight);
                         holdi -=1;
                         move = 0;
-                }}else if(left ==2 ){//move right
-                if(worldMap[i+1][j] == black){
-                    cantMoveRight = true;
-                    g.fillRect(x, y, rectWidth, rectHeight);
-                }else {
-                    cantMoveRight = false;
+                }else if(left ==2 ){//move right
                     g.fillRect(x+10, y, rectWidth, rectHeight);
                     holdi +=1;
                     move = 0;
-                }}}
+                }}
                 }else if(holdi == i && holdj ==j){
                     g.setColor(Color.GREEN);
                     int x = i * rectWidth;
@@ -196,9 +182,12 @@ public class Map extends JPanel {
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.pack();
                 frame.setVisible(true);
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
                  boolean solved = map.solve();
+                 System.out.println(map.toString());
                 System.out.println("Solved: " + solved);
-                System.out.println(map.toString());
+                
             }
         Runnable helloRunnable = new Runnable() {
             public void run() {
@@ -210,7 +199,7 @@ public class Map extends JPanel {
         });
     }
     public boolean solve() {
-        return traverse(2,2);
+        return traverse(20,20);
     }
 
     private boolean traverse(int i, int j) {
@@ -250,14 +239,13 @@ public class Map extends JPanel {
     }
 
     private boolean isEnd(int i, int j) {
-        return i == 25 && j == 25;
+        return i == 97 && j == 50;
     }
 
     private boolean isValid(int i, int j) {
         if (inRange(i, j) && isOpen(i, j) && !isTried(i, j)) {
             return true;
         }
-
         return false;
     }
 
