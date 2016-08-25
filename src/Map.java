@@ -13,6 +13,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 public class Map extends JPanel {
 
+    //my first attempt at creating a map..
+    //does not work correctly. 
+    //do not use
+    //left in for demo reasons.
     final static JFrame frame = new JFrame("SIMULATOR");
     final static int TRIED = 2;
     final static int PATH = 3;
@@ -39,7 +43,6 @@ public class Map extends JPanel {
         Color gray = Color.GRAY;
         this.worldMap = new Color[NUM_ROWS][NUM_COLS];
         this.map = new int[NUM_ROWS][NUM_COLS];
-        Random r = new Random();
         // Randomize the terrain
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
