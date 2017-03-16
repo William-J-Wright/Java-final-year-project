@@ -50,10 +50,8 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-/**
- *
- * @author jerome
- */
+
+
 public class Main extends JPanel{
     //setting every variable.
     public static long totalMemoryUsed;
